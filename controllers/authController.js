@@ -12,3 +12,13 @@ exports.logout = (req, res) => {
     req.flash('success', 'You are now logged out');
     res.redirect('/');
 }
+
+exports.isLoggedIn = (req, res, next) => {
+    // checks with passport 
+    if(req.isAuthenticated()) {
+        next();
+    } else {
+        req.flash('error', 'You must be logged in');
+        res.redirect('/login');
+    }
+}
