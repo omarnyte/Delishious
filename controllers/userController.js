@@ -39,3 +39,6 @@ exports.register = async (req, res, next) => {
     next();
 }
 
+exports.account = (req, res) => {
+    res.render('account', { title: 'Edit Your Account' });
+}
