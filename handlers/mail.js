@@ -13,14 +13,22 @@ const transport = nodemailer.createTransport({
    }
 });
 
+const generateHTML = (fileName, options = {}) => {
+    const html = pug.renderFile(`${__dirname}/../views/email/${fileName}.pug`, options);
+    console.log(html);
+    return html;
+    
+}
+
 exports.send = async (options) => {
+    const html = generateHTML(options.fileName, options)
     const mailOptions = {
         from: 'Omar D <omar@gmail.com>',
         to: options.user.email,
         subject: options.subject,
-        html: '_TO BE FILLED_',
+        html,
         text: '_TO BE FILLED_'
     }
-    const sendMail = promoisify(transport.sendMail, transport);
-    return sendMail(mailOtions);
+    const sendMail = promisify(transport.sendMail, transport);
+    return sendMail(mailOptions);
 }
