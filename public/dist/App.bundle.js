@@ -1036,7 +1036,7 @@ function loadPlaces(map) {
         // show details when marker is  clicked 
         markers.forEach(function (marker) {
             return marker.addListener('click', function () {
-                var html = '\n                    <div class="popup">\n                        <a href="/store/' + this.place.slug + '">\n                            <img src="/uploads/' + (this.place.photo || 'store.png') + '" alt="' + this.place.name + '" />\n                            <p>' + this.place.name + ' - ' + this.place.address + '</p>\n                        </a>\n                    </div>\n                ';
+                var html = '\n                    <div class="popup">\n                        <a href="/stores/' + this.place.slug + '">\n                            <img src="/uploads/' + (this.place.photo || 'store.png') + '" alt="' + this.place.name + '" />\n                            <p>' + this.place.name + ' - ' + this.place.address + '</p>\n                        </a>\n                    </div>\n                ';
                 infoWindow.setContent(html);
                 infoWindow.open(map, this);
             });
@@ -1055,6 +1055,10 @@ function makeMap(mapDiv) {
 
     var input = (0, _bling.$)('[name="geolocate"]');
     var autocomplete = new google.maps.places.Autocomplete(input);
+    autocomplete.addListener('place_changed', function () {
+        var place = autocomplete.getPlace();
+        loadPlaces(map, place.geometry.location.lat(), place.geometry.location.lng());
+    });
 }
 
 exports.default = makeMap;
