@@ -24,7 +24,7 @@ const userSchema = new Schema({
     resetPasswordExpires: Date, 
     hearts: {
         type: [
-            { type: mongoose.Schema.ObjectId, ref: store }
+            { type: mongoose.Schema.ObjectId, ref: 'Store' }
         ]
     }
 });
