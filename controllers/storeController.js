@@ -137,10 +137,10 @@ exports.heartStore = async (req, res) => {
   // $addToSet instead of push to prevent duplicates 
   const operator = hearts.includes(req.params.id) ? '$pull' : '$addToSet'; 
   const user = await User
-  .findByIdAndUpdate(req.user._id,
-    { [operator]: { hearts: req.params.id} },
-    { new: true }
-  )
+    .findByIdAndUpdate(req.user._id,
+      { [operator]: { hearts: req.params.id } },
+      { new: true }
+    )
   res.json(user);
 }
 
