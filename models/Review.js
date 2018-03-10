@@ -1,31 +1,40 @@
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
 mongoose.Promise = global.Promise;
 
-const reviewSchema = new Schema({
+const reviewSchema = new mongoose.Schema({
     created: {
-        type: Date, 
+        type: Date,
         default: Date.now
     },
     author: {
         type: mongoose.Schema.ObjectId,
         ref: 'User',
         required: 'You must supply an author!'
-    }, 
+    },
     store: {
         type: mongoose.Schema.ObjectId,
         ref: 'Store',
         required: 'You must supply a store!'
-    }, 
+    },
     text: {
         type: String,
         required: 'Your review must have text!'
-    } , 
+    },
     rating: {
-        type: Number, 
-        min: 1, 
+        type: Number,
+        min: 1,
         max: 5
     }
 });
+
+function autopopulate(next) {
+    this.populate('author');
+    next();
+}
+
+// adds hooks to find and findOne so that author field is auto populated
+reviewSchema.pre('find', autopopulate);
+reviewSchema.pre('findOne', autopopulate);
+
 
 module.exports = mongoose.model('Review', reviewSchema);
