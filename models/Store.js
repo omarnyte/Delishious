@@ -86,6 +86,7 @@ storeSchema.statics.getTopStores = function() {
       photo: '$$ROOT.photo',
       name: '$$ROOT.name',
       reviews: '$$ROOT.reviews',
+      slug: '$$ROOT.slug',
       averageRating: { $avg: '$reviews.rating' }
     } },
     // sort by highest reviews first 
