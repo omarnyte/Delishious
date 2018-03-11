@@ -66,11 +66,32 @@ storeSchema.pre('save', async function(next) {
   next();
 });
 
+// proper function because we need access to 'this'
 storeSchema.statics.getTagsList = function() {
   return this.aggregate([
     { $unwind: '$tags' }, 
     { $group: { _id: '$tags', count: { $sum: 1 } } },
     { $sort: { count: -1 }}
+  ]);
+}
+
+storeSchema.statics.getTopStores = function() {
+  return this.aggregate([
+    // lookup stores and populate their reviews
+    { $lookup: { from: 'reviews', localField: '_id', foreignField: 'store', as: 'reviews' }},
+    // filter for only items that have two or more reviews 
+    { $match: { 'reviews.1': { $exists: true } }}, // reviews.1 refers to second review 
+    //add the average review field 
+    { $project: {
+      photo: '$$ROOT.photo',
+      name: '$$ROOT.name',
+      reviews: '$$ROOT.reviews',
+      averageRating: { $avg: '$reviews.rating' }
+    } },
+    // sort by highest reviews first 
+    { $sort: { averageRating: -1 }},
+    // limit to 10 
+    { $limit: 10 }
   ]);
 }
 
