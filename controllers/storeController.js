@@ -51,8 +51,25 @@ exports.createStore = async (req, res) => {
 };
 
 exports.getStores = async (req, res) => {
-  const stores = await Store.find().populate('reviews');
-  res.render('stores', {title: 'Stores', stores});
+  const page = req.params.page || 1; // 1 in case request comes from front page
+  const limit = 4;
+  const skip = (page * limit) - limit; 
+
+  const storesPromise = Store
+    .find()
+    .skip(skip)
+    .limit(limit);
+
+  const countPromise = Store.count();
+
+  const [stores, count] = await Promise.all([storesPromise, countPromise]);
+  const pages = Math.ceil(count / limit);
+  if (!stores.length && skip) {
+    req.flash('info', `Page ${page} does not exist! I'm sending you back to page ${pages}`);
+    res.redirect(`/stores/page/${pages}`);
+    return;
+  }
+  res.render('stores', {title: 'Stores', stores, page, pages, count});
 }
 
 const confirmOwner = (store, user) => {
